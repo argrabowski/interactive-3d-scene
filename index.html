@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>CS 4731 Final Project</title>
+
+    <script id="vshader" type="x-shader/x-vertex">
+      attribute vec4 vPosition;
+      attribute vec4 vNormal;
+      attribute vec2 vTexture;
+      attribute vec4 vDiffuse;
+      attribute vec4 vSpecular;
+
+      uniform mat4 projectionMat;
+      uniform mat4 modelViewMat;
+      uniform vec4 lightPosition;
+
+      varying vec3 L, N, V;
+      varying vec4 fDiffuse;
+      varying vec4 fSpecular;
+      varying vec2 fTexture;
+
+      void main() {
+        vec3 pos = (modelViewMat * vPosition).xyz;
+        L = normalize(lightPosition.xyz - pos);
+        N = normalize(modelViewMat * vNormal).xyz;
+        V = normalize(-pos);
+
+        fDiffuse = vDiffuse;
+        fSpecular = vSpecular;
+        fTexture = vTexture;
+
+        gl_Position = projectionMat * modelViewMat * vPosition;
+      }
+    </script>
+
+    <script id="fshader" type="x-shader/x-fragment">
+      precision mediump float;
+
+      uniform float shininess;
+      uniform float lampLight;
+      uniform float textured;
+      uniform sampler2D texture;
+
+      varying vec3 L, N, V;
+      varying vec4 fDiffuse;
+      varying vec4 fSpecular;
+      varying vec2 fTexture;
+
+      void main() {
+        vec3 R = (2.0 * dot(L, N) * N) - L;
+        vec4 diffuse = fDiffuse * dot(L, N);
+        vec4 ambient = fDiffuse * fSpecular;
+        vec4 specular = fSpecular * pow(max(dot(V, R), 0.0), shininess);
+        vec4 fColor;
+
+        if(lampLight > 0.5) {
+          fColor = diffuse + specular + ambient;
+        } else {
+          fColor = ambient;
+        }
+
+        if(textured > 0.5) {
+          fColor = fColor * texture2D(texture, fTexture);
+        }
+
+        gl_FragColor = fColor;
+      }
+    </script>
+
+    <script type="text/javascript" src="lib/webgl-utils.js"></script>
+    <script type="text/javascript" src="lib/initShaders.js"></script>
+    <script type="text/javascript" src="lib/MV.js"></script>
+
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="parser.js"></script>
+  </head>
+
+  <body onload="main()">
+    <h1 id="mode">CS 4731 Final Project</h1>
+
+    <canvas id="webgl" class="box" width="1600" height="900" style="border: 1px solid black"> Please use a browser that supports the "canvas" tag. </canvas>
+  </body>
+</html>
