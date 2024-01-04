@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>CS 4731 Final Project</title>
+    <title>Interactive 3D Scene</title>
 
     <script id="vshader" type="x-shader/x-vertex">
       attribute vec4 vPosition;
@@ -68,16 +68,16 @@
       }
     </script>
 
-    <script type="text/javascript" src="lib/webgl-utils.js"></script>
-    <script type="text/javascript" src="lib/initShaders.js"></script>
-    <script type="text/javascript" src="lib/MV.js"></script>
+    <script type="text/javascript" src="../lib/webgl-utils.js"></script>
+    <script type="text/javascript" src="../lib/initShaders.js"></script>
+    <script type="text/javascript" src="../lib/MV.js"></script>
 
-    <script type="text/javascript" src="main.js"></script>
-    <script type="text/javascript" src="parser.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <script type="text/javascript" src="../js/parser.js"></script>
   </head>
 
   <body onload="main()">
-    <h1 id="mode">CS 4731 Final Project</h1>
+    <h1 id="mode">Interactive 3D Scene</h1>
 
     <canvas id="webgl" class="box" width="1600" height="900" style="border: 1px solid black"> Please use a browser that supports the "canvas" tag. </canvas>
   </body>
