@@ -5,6 +5,8 @@
     <title>Interactive 3D Scene</title>
 
     <script id="vshader" type="x-shader/x-vertex">
+      precision mediump float;
+
       attribute vec4 vPosition;
       attribute vec4 vNormal;
       attribute vec2 vTexture;
@@ -14,22 +16,27 @@
       uniform mat4 projectionMat;
       uniform mat4 modelViewMat;
       uniform vec4 lightPosition;
+      uniform float skybox;
 
-      varying vec3 L, N, V;
+      varying vec3 L, N, V, R, F;
       varying vec4 fDiffuse;
       varying vec4 fSpecular;
       varying vec2 fTexture;
 
       void main() {
-        vec3 pos = (modelViewMat * vPosition).xyz;
-        L = normalize(lightPosition.xyz - pos);
-        N = normalize(modelViewMat * vNormal).xyz;
-        V = normalize(-pos);
+        if(skybox < 0.5) {
+          vec3 pos = (modelViewMat * vPosition).xyz;
+          L = normalize(lightPosition.xyz - pos);
+          N = normalize(modelViewMat * vNormal).xyz;
+          V = normalize(-pos);
+          R = reflect(pos, N);
+          F = refract(pos, N, 0.9);
 
-        fDiffuse = vDiffuse;
-        fSpecular = vSpecular;
+          fDiffuse = vDiffuse;
+          fSpecular = vSpecular;
+        }
+
         fTexture = vTexture;
-
         gl_Position = projectionMat * modelViewMat * vPosition;
       }
     </script>
@@ -39,29 +46,65 @@
 
       uniform float shininess;
       uniform float lampLight;
-      uniform float textured;
-      uniform sampler2D texture;
+      uniform float black;
+      uniform float sign;
+      uniform float skybox;
+      uniform float car;
+      uniform float reflect;
+      uniform float bunny;
+      uniform float refract;
 
-      varying vec3 L, N, V;
+      uniform sampler2D signTex;
+      uniform sampler2D skyTexNegX;
+      uniform sampler2D skyTexNegY;
+      uniform sampler2D skyTexNegZ;
+      uniform sampler2D skyTexPosX;
+      uniform sampler2D skyTexPosY;
+      uniform sampler2D skyTexPosZ;
+      uniform samplerCube texMap;
+
+      varying vec3 L, N, V, R, F;
       varying vec4 fDiffuse;
       varying vec4 fSpecular;
       varying vec2 fTexture;
 
       void main() {
-        vec3 R = (2.0 * dot(L, N) * N) - L;
-        vec4 diffuse = fDiffuse * dot(L, N);
-        vec4 ambient = fDiffuse * fSpecular;
-        vec4 specular = fSpecular * pow(max(dot(V, R), 0.0), shininess);
         vec4 fColor;
 
-        if(lampLight > 0.5) {
-          fColor = diffuse + specular + ambient;
-        } else {
-          fColor = ambient;
-        }
+        if(skybox < 0.5) {
+          if(black > 0.5) {
+            fColor = vec4(0.05, 0.05, 0.05, 1.0);
+          } else {
+            vec4 ambient = fDiffuse * fSpecular;
+            if(lampLight > 0.5) {
+              vec3 S = (2.0 * dot(L, N) * N) - L;
+              vec4 diffuse = fDiffuse * dot(L, N);
+              vec4 specular = fSpecular * pow(max(dot(V, S), 0.0), shininess);
+              fColor = diffuse + specular + ambient;
+            } else {
+              fColor = ambient;
+            }
 
-        if(textured > 0.5) {
-          fColor = fColor * texture2D(texture, fTexture);
+            if(sign > 0.5) {
+              fColor = fColor * texture2D(signTex, fTexture);
+            } else if(car > 0.5 && reflect > 0.5) {
+              fColor = fColor + textureCube(texMap, R);
+            } else if(bunny > 0.5 && refract > 0.5) {
+              fColor = fColor * textureCube(texMap, F);
+            }
+          }
+        } else if(skybox < 1.5) {
+          fColor = texture2D(skyTexNegX, fTexture);
+        } else if(skybox < 2.5) {
+          fColor = texture2D(skyTexNegY, fTexture);
+        } else if(skybox < 3.5) {
+          fColor = texture2D(skyTexNegZ, fTexture);
+        } else if(skybox < 4.5) {
+          fColor = texture2D(skyTexPosX, fTexture);
+        } else if(skybox < 5.5) {
+          fColor = texture2D(skyTexPosY, fTexture);
+        } else if(skybox < 6.5) {
+          fColor = texture2D(skyTexPosZ, fTexture);
         }
 
         gl_FragColor = fColor;
