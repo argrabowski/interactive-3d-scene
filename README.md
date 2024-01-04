@@ -31,11 +31,11 @@ cd interactive-3d-scene
 ## Usage
 
 Use the following keys for interaction:
-    - **L:** Toggle lamp light on/off.
-    - **C:** Toggle camera animation.
-    - **M:** Toggle driving animation.
-    - **D:** Switch between camera views (car view or default view).
-    - **S:** Toggle shadows on/off.
-    - **E:** Toggle day/night skybox.
-    - **R:** Toggle reflections on/off.
-    - **F:** Toggle refractions on/off.
+- **L:** Toggle lamp light on/off.
+- **C:** Toggle camera animation.
+- **M:** Toggle driving animation.
+- **D:** Switch between camera views (car view or default view).
+- **S:** Toggle shadows on/off.
+- **E:** Toggle day/night skybox.
+- **R:** Toggle reflections on/off.
+- **F:** Toggle refractions on/off.
