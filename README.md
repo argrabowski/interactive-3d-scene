@@ -1,5 +1,7 @@
 # Interactive 3D Scene
 
+https://interactive-3d-scene.glitch.me
+
 ## Overview
 
 This project is a WebGL-based animation showcasing various 3D objects, lighting effects, and camera animations. The scenes include a car driving on a street, a rotating bunny, a stop sign, a lamp post, and a dynamic skybox with day and night transitions. Users can interact with the animation using keyboard inputs to control the camera, enable/disable lamp light, toggle animations, shadows, and more.
@@ -28,7 +30,7 @@ cd interactive-3d-scene
 
 ## Usage
 
-- Use the following keys for interaction:
+Use the following keys for interaction:
     - **L:** Toggle lamp light on/off.
     - **C:** Toggle camera animation.
     - **M:** Toggle driving animation.
